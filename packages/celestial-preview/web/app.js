@@ -51,7 +51,7 @@ function drawFrame(now){if(document.visibilityState==='hidden'){requestAnimation
  // A single golden centerlight reaches the mobile landing sphere and its water reflection.
  const beamY=mobile()?H*.87:H*.73;let beam=ctx.createLinearGradient(center.x,center.y,center.x,beamY);beam.addColorStop(0,'rgba(255,204,146,.0)');beam.addColorStop(.48,'rgba(255,197,142,.26)');beam.addColorStop(1,'rgba(255,211,153,.05)');ctx.strokeStyle=beam;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(center.x,center.y);ctx.lineTo(W*.5,beamY);ctx.stroke();
  for(const e of events){const p=eventVisual(e,tick);if(p.pulse<.006)continue;ctx.strokeStyle=`rgba(255,228,186,${p.pulse*.50})`;ctx.lineWidth=1.3;const r=(1-p.pulse)*100+10;ctx.beginPath();ctx.ellipse(W*.5,H*.84,r,r*.17,0,0,6.283);ctx.stroke()}
- if(water.mode==='CANVAS_FALLBACK'){
+ if(water.mode==='CANVAS_REFRACTED_WATER' && !mobile()){
   const horizon=mobile()?H*.57:H*.52;
   for(let j=0;j<145;j++){
    const u=unit('glass-water-u'+j),v=unit('glass-water-v'+j);
@@ -69,6 +69,6 @@ requestAnimationFrame(drawFrame);
 const initial=renderableOrbs(0,0,14)[0];$('constellation-label').textContent=initial.name.toUpperCase();
 // A single window announces capability without displaying an intrusive search icon or box.
 window.GLASS_SPACE={schema:SKY_SCHEMA,select:(i)=>{selected=Math.max(0,Math.min(87,i));$('constellation-label').textContent=IAU_88[selected].toUpperCase()},
- status:()=>({renderer:water.mode,backend:serverHealth,events:events.length,skySchema:SKY_SCHEMA,prepared:evidence?.status||'NONE'}),
+ status:()=>({renderer:water.mode,frames:water.frames,reduceMotion:reduced,waterSourceLoaded:water.sourceReady,backend:serverHealth,events:events.length,skySchema:SKY_SCHEMA,prepared:evidence?.status||'NONE'}),
  worldEvent:(e)=>{const event=makeEvent(e);events.push(event);water.signal();return event},
  awaken};
